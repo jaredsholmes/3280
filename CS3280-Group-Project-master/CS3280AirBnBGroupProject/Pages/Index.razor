@@ -1,0 +1,79 @@
+﻿@page "/"
+
+<div class="covid">
+    <a href="/Covid" target="">Covid-19 response information</a>
+</div>
+
+<header class="header">
+    <h1 classs="searchItem">
+        Welcome to Air BnB!!
+    </h1>
+    <h3 classs="searchItem">  Search for the ultimate vacation!!</h3>
+</header>
+
+<form>
+    <div class="searchForm">
+        <div class="searchItem">
+            <label for="Location">Choose a Location: </label>
+            <select name="location" @bind="Request.Location" id="location" required>
+                <option value="">--Please choose an option--</option>
+                <option value="Salt Lake City">Salt Lake City, UT</option>
+                <option value="Phoenix">Phoenix, AZ</option>
+                <option value="Portland">Portland, ME</option>
+                <option value="Shannon">Shannon, Ireland</option>
+            </select>
+        </div>
+        <div class="searchItem">
+            <label for="checkindate">Check-in date:</label>
+            <input type="date" id="checkindate" name="checkindate"
+                   min="2020-08-11" max="2030-12-31" @bind="Request.InDateRequested" required>
+        </div>
+        <div class="searchItem">
+            <label for="checkoutdate">Check-out date:</label>
+            <input type="date" id="checkoutdate" name="checkoutdate"
+                   min="2020-08-12" max="2030-12-31" @bind="Request.OutDateRequested" required>
+        </div>
+
+        @if (Request.InDateRequested > Request.OutDateRequested)
+        {
+            Request.OutDateRequested = null;
+            <p>Please select a date after your checkin</p>
+        }
+
+        <div class="searchItem">
+            <label for="guest-select">How Many Guests?</label>
+            <select name="adults" @bind="Request.NumAdults" id="adults-select" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+
+        @{
+            var CheckInDate = Request.InDateRequested.ToString().Replace('/', '-');
+            var CheckOutDate = Request.OutDateRequested.ToString().Replace('/', '-');
+            var nextPage = "";
+            if (Request.InDateRequested < Request.OutDateRequested)
+            {
+                nextPage = "/PopulatedResults/" + Request.Location + "/" + CheckInDate + "/" + CheckOutDate;
+            }
+            else
+            {
+                nextPage = "/";
+            }
+        }
+
+        <div class="searchItem">
+            <a href="@nextPage">
+                <input type="submit" value="Search" class="button">
+            </a>
+        </div>
+    </div>
+</form>
+
+@code {
+    public SearchResultController Request { get; set; } = new SearchResultController();
+}

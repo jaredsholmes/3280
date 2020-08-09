@@ -1,0 +1,153 @@
+﻿@page "/PopulatedResults/{Location}/{CheckInDate}/{CheckOutDate}"
+@page "/PopulatedResults/{Location}/{CheckInDate}/{CheckOutDate}/{Wifi}/{Handicap}/{WasherDryer}/{Pool}"
+@using System.Collections.Generic;
+@using CS3280AirBnBGroupProject.Models
+@using CS3280AirBnBGroupProject.Services
+@using CS3280AirBnBGroupProject.Models.Interfaces
+@using CS3280AirBnBGroupProject.Repositories
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Accessor
+@inject CS3280AirBnBGroupProject.Services.Interfaces.IResultService ResultService
+@inject IModalService Modal
+
+@{
+    var appliedAmenitiesFilters = new List<string>();
+    var getAmenities = new ResourceRepository();
+    var searchCriteriaResults = new List<IResult>();
+
+    getAmenities.AddFilters(appliedAmenitiesFilters, Wifi, Handicap, WasherDryer, Pool);
+    getAmenities.ApplyFiltersToSearchResults(_results, searchCriteriaResults, appliedAmenitiesFilters, Location);
+}
+
+<h3>@searchCriteriaResults.Count Results</h3>
+
+<input type="button" @onclick="@(() => PopUpFilterInformation(Location, CheckInDate, CheckOutDate))" class="btn btn-primary" value="Filters" />
+@foreach (var result in searchCriteriaResults)
+{
+    <a href="/SelectedResult/@result.Id/@CheckInDate/@CheckOutDate" class="inactive">
+        <div class="ResultsContainer">
+            <div class="imagecontainer">
+                <img src="@result.MainImageUrl" class="Images" alt="image" />
+            </div>
+            <div class="detailscontainer">
+                <div class="Location">
+                    <h3>@result.City, @result.State</h3>
+                </div>
+                <div class="Description">
+                    <p>@result.Description</p>
+                </div>
+                <div class="Ammenities">
+                    <ul>
+                        @{ foreach (var amenity in result.Amenities)
+                            {
+                                <li class="li">@amenity</li>
+                            }
+                        }
+                    </ul>
+                </div>
+                <br />
+                <div class="SleepingOptions">
+                    <ul>
+                        @{ foreach (var option in result.SleepingOptions)
+                            {
+                                <li class="li">@option</li>
+                            }
+                        }
+                    </ul>
+                </div>
+                <br />
+                <div class="Rating">
+                    <p>@result.Rating</p>
+                </div>
+            </div>
+        </div>
+    </a>
+}
+
+@code
+{
+    #region Parameters
+
+    /// <summary>
+    /// The Location (city) specified from the home page search criteria
+    /// </summary>
+    [Parameter]
+    public string Location { get; set; }
+
+    /// <summary>
+    /// The Check-In-Date specified from the home page search criteria
+    /// </summary>
+    [Parameter]
+    public string CheckInDate { get; set; }
+
+    /// <summary>
+    /// The Check-Out-Date specified from the home page search criteria
+    /// </summary>
+    [Parameter]
+    public string CheckOutDate { get; set; }
+
+    /// <summary>
+    /// The current filter value for the wifi amenity when filter is applied
+    /// </summary>
+    [Parameter]
+    public string Wifi { get; set; }
+
+    /// <summary>
+    /// The current filter value for the washer/dryer amenity when filter is applied
+    /// </summary>
+    [Parameter]
+    public string WasherDryer { get; set; }
+
+    /// <summary>
+    /// The current filter value for the handicap accessible amenity when filter is applied
+    /// </summary>
+    [Parameter]
+    public string Handicap { get; set; }
+
+    /// <summary>
+    /// The current filter value for the pool amenity when filter is applied
+    /// </summary>
+    [Parameter]
+    public string Pool { get; set; }
+
+    #endregion
+
+    #region Repository/Database Access
+
+    /// <summary>
+    /// Getter/Setter for Database/Repository results
+    /// </summary>
+    private IList<IResult> _results { get; set; }
+
+    /// <summary>
+    /// Pull the results/Places from the Database/Repository, and initializes them on page load
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        var repos = new MockResultRepository();
+        _results = repos.Search();
+
+        base.OnInitialized();
+    }
+
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// The method allows the passing of parameters to the pop-up/Modal, which brings up the FilterPopUp page
+    /// </summary>
+    /// <param name="location">The Location (city) specified from the home page search criteria</param>
+    /// <param name="checkInDate">The Check-In-Date specified from the home page search criteria</param>
+    /// <param name="checkOutDate">The Check-Out-Date specified from the home page search criteria</param>
+    void PopUpFilterInformation(string location, string checkInDate, string checkOutDate)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(FilterPopUp.Location), location);
+        parameters.Add(nameof(FilterPopUp.CheckInDate), checkInDate);
+        parameters.Add(nameof(FilterPopUp.CheckOutDate), checkOutDate);
+
+        Modal.Show<FilterPopUp>("Filters", parameters);
+    }
+
+    #endregion
+}

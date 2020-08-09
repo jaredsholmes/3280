@@ -1,0 +1,114 @@
+﻿@page "/filterpopup/{Location}/{CheckInDate}/{CheckOutDate}"
+@using CS3280AirBnBGroupProject.Models
+@using CS3280AirBnBGroupProject.Repositories
+@inject IModalService Modal
+
+    <h3>Amenities</h3>
+    <div class="filterContainer">
+        <input class="filterItem" type="checkbox" id="AmenitiesOption1" name="AmenitiesOption1" value="Wifi" @bind="@_amenities.Wifi" />
+        <label class="filterItem" for="AmenitiesOption1"> Wifi</label><br />
+        <input class="filterItem" type="checkbox" id="AmenitiesOption2" name="AmenitiesOption2" value="Handicap Accessible" @bind="@_amenities.Handicap" />
+        <label class="filterItem" for="AmenitiesOption2"> Handicap Accessible</label><br />
+        <input class="filterItem" type="checkbox" id="AmenitiesOption3" name="AmenitiesOption3" value="Washer/Dryer" @bind="@_amenities.WasherDryer" />
+        <label class="filterItem" for="AmenitiesOption3"> Washer/Dryer</label><br />
+        <input class="filterItem" type="checkbox" id="AmenitiesOption4" name="AmenitiesOption4" value="Pool" @bind="@_amenities.Pool" />
+        <label class="filterItem" for="AmenitiesOption4"> Pool</label><br />
+    </div>
+@{ 
+    //If/Else statement to compare the checkbox state and apply the appropriate string value to be passed to the PopulatedResults Page
+    if (_amenities.Wifi is true)
+    {
+        wifi = "wifi";
+    }
+    else
+    {
+        wifi = "false";
+    }
+
+
+    if(_amenities.Handicap is true)
+    {
+        handicap = "handicap accessible";
+    }
+    else
+    {
+        handicap = "false";
+    }
+
+
+    if (_amenities.WasherDryer is true)
+    {
+        washerDryer = "washer-dryer";
+    }
+    else
+    {
+        washerDryer = "false";
+    }
+
+
+    if (_amenities.Pool is true)
+    {
+        pool = "pool";
+    }
+    else
+    {
+        pool = "false";
+    }
+}
+
+<div class="filterItem">
+    <a href="/PopulatedResults/@Location/@CheckInDate/@CheckOutDate/@wifi/@handicap/@washerDryer/@pool">
+        <input type="submit" value="Apply" class="button2">
+    </a>
+</div>
+
+@code {
+    #region Parameters
+
+    //Incoming Parameters
+    /// <summary>
+    /// The Location (city) specified from the home page search criteria
+    /// </summary>
+    [Parameter]
+    public string Location { get; set; }
+
+    /// <summary>
+    /// The Check-In-Date specified from the home page search criteria
+    /// </summary>
+    [Parameter]
+    public string CheckInDate { get; set; }
+
+    /// <summary>
+    /// The Check-Out-Date specified from the home page search criteria
+    /// </summary>
+    [Parameter]
+    public string CheckOutDate { get; set; }
+
+    //Local Parameters
+    /// <summary>
+    /// Instantiates an instance of Amenities to access the various amenities and assign them the appropriate value based on the checkbox status
+    /// </summary>
+    private Amenities _amenities { get; set; } = new Amenities();
+
+    /// <summary>
+    /// getter/setter for string "wifi" to pass back to the PopulatedResults page for comparison against the search criteria result set
+    /// </summary>
+    private string wifi { get; set; }
+
+    /// <summary>
+    /// getter/setter for string "handicap" to pass back to the PopulatedResults page for comparison against the search criteria result set
+    /// </summary>
+    private string handicap { get; set; }
+
+    /// <summary>
+    /// getter/setter for string "washerDryer" to pass back to the PopulatedResults page for comparison against the search criteria result set
+    /// </summary>
+    private string washerDryer { get; set; }
+
+    /// <summary>
+    /// getter/setter for string "pool" to pass back to the PopulatedResults page for comparison against the search criteria result set
+    /// </summary>
+    private string pool { get; set; }
+
+    #endregion
+}

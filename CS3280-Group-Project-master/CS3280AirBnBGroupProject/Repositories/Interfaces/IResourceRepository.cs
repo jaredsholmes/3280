@@ -1,0 +1,35 @@
+﻿using CS3280AirBnBGroupProject.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CS3280AirBnBGroupProject.Repositories
+{
+    /// <summary>
+    /// This interace contains methods to be implemented by a class which help to filter results that come from the Database/Repository intended.
+    /// </summary>
+    public interface IResourceRepository
+    {
+        #region Methods
+
+        /// <summary>
+        /// Add an array of amenities to a list<string>() to be compared against other results.
+        /// </summary>
+        /// <param name="amenitiesFilter">A list of amenities selected in the FilterPopUp Page, as chosen by the user.</param>
+        /// <param name="amenity">A dynamically changing quanitity array of amenities in string format that will be added to the amenitiesFilter list.</param>
+        void ApplyFiltersToSearchResults() { }
+
+        /// <summary>
+        /// Compares the list of filters if any were selected from the FiltersPopUp Page, to the original set of results populated from the intital search criteria, 
+        /// in order to narrow down results. 
+        /// </summary>
+        /// <param name="repositoryResults">The initial list of results from the Database/Repository based off of the initial search criteria.</param>
+        /// <param name="filteredResults">The list of results based off of the initial repositoryResults after filters are applied. </param>
+        /// <param name="appliedFilters">The list of filters to be applied to the results.</param>
+        /// <param name="location">The city name/property for the result</param>
+        void AddFilters() { }
+
+        #endregion
+    }
+}

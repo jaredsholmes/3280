@@ -1,0 +1,149 @@
+﻿@page "/SelectedResult/{Id:int}/{CheckInDate}/{CheckOutDate}"
+@using CS3280AirBnBGroupProject.Models
+@using CS3280AirBnBGroupProject.Models.Interfaces
+@using CS3280AirBnBGroupProject.Services
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Accessor
+@inject CS3280AirBnBGroupProject.Services.Interfaces.IResultService ResultService
+@inject NavigationManager NavigationManager
+
+@{
+    var amountOfDays = ResultService.NumberOfDays(CheckInDate, CheckOutDate);
+    var costForDaysSpent = ResultService.TotalNightlyCost(_result, amountOfDays);
+    var occupancyTaxesAndFees = ResultService.TaxesFee(costForDaysSpent);
+    var totalCost = ResultService.TotalCostOfBooking(costForDaysSpent, occupancyTaxesAndFees);
+}
+
+<div class="Location">
+    <h3>@_result.City, @_result.State</h3>
+    <h4>@_result.Address</h4>
+</div>
+
+    <div class="content2">
+        <div class="content-carrousel">
+            @foreach (var image in _result.AdditionalImageUrls)
+            {
+                <figure class="shadow"><img src="@image" alt="image"></figure>
+            }
+                <figure class="shadow"><img src="/Images/imagelogo.jpg" alt="logo"></figure>
+        </div>
+    </div>
+
+
+<div class="SelectedResultDetailsContainer">
+    <div class="Description">
+        <p>@_result.Description</p>
+    </div>
+    <div class="AmenitiesAndOptionsContainer">
+        <div class="SelectedResultAmenities">
+            <h4>Amenities</h4>
+            <ul>
+                @{foreach (var item in _result.Amenities)
+                    {
+                        <li>@item</li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="SelectedResultSleepingOptions">
+            <h4>Sleeping Options:</h4>
+            <ul>
+                @{foreach (var item in _result.SleepingOptions)
+                    {
+                        <li>@item</li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="Rating">
+        <h4>@_result.Rating</h4>
+    </div>
+</div>
+<div class="ReceiptBreakdown">
+    <div class="Cost">
+
+    </div>
+    <div class="CheckInOutDates">
+        <div>
+            <h5>Check-In</h5>
+            <p>@CheckInDate.Substring(0, 9)</p>
+        </div>
+        <div class="verticalLine">
+        </div>
+        <div>
+            <h5>Check-Out</h5>
+            <p>@CheckOutDate.Substring(0, 9)</p>
+        </div>
+    </div>
+    <hr />
+    <div class="CostsAndFeesBreakdown">
+        <p>
+            <pre class="tab">$@_result.Cost x @amountOfDays nights:                   $@costForDaysSpent</pre>
+        </p>
+        <p>
+            <pre class="tab">Cleaning Fee:                      $50</pre>
+        </p>
+        <p>
+            <pre class="tab">Service Fee:                       $200</pre>
+        </p>
+        <p>
+            <pre class="tab">Occupancy Taxes and Fees:          $@occupancyTaxesAndFees</pre>
+        </p>
+    </div>
+    <div class="TotalCost">
+        <h4>
+            <pre class="tab">Total Cost:            $@totalCost</pre>
+        </h4>
+    </div>
+
+    <div class="ReserveButton">
+        <a href="/BillingInformation/@totalCost/@Id">
+            <input type="button" class="button" value="Reserve Now">
+        </a>
+    </div>
+</div>
+
+@code {
+    #region Parameters
+
+    /// <summary>
+    /// The unique ID for the Place/Result which was selected from the PopulatedResults page
+    /// </summary>
+    [Parameter]
+    public int Id { get; set; }
+
+    /// <summary>
+    /// The Check-In-Date specified from the home page search criteria
+    /// </summary>
+    [Parameter]
+    public string CheckInDate { get; set; }
+
+    /// <summary>
+    /// The Check-Out-Date specified from the home page search criteria
+    /// </summary>
+    [Parameter]
+    public string CheckOutDate { get; set; }
+
+    #endregion
+
+    #region Database/Repository Access
+
+    /// <summary>
+    /// Getter/Setter for Database/Repository results
+    /// </summary>
+    private IResult _result { get; set; }
+
+    /// <summary>
+    /// Pull the results/Places from the initial list of results from the criteria based off of the place/result's unique ID, and initializes them on page load
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        _result = ResultService.GetById(Id);
+
+        base.OnInitialized();
+    }
+
+    #endregion
+}
+
+

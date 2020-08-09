@@ -1,0 +1,77 @@
+﻿@page "/PaymentInformation/{Total:decimal}/{Id:int}/{Email}/{FirstName}/{LastName}"
+@using CS3280AirBnBGroupProject.Models;
+@using System.Web;
+@inject IModalService Modal
+@inject CS3280AirBnBGroupProject.Models.Interfaces.IPayment _payment
+
+
+<div class="col-50">
+    <h3>Payment</h3>
+
+    <EditForm Model="@_payment">
+        <DataAnnotationsValidator />
+
+        <label for="fname">Accepted Cards</label>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <div class="icon-container">
+            <i class="fa fa-cc-visa" style="color:navy; font-size:36px"></i>
+            <i class="fa fa-cc-amex" style="color:blue; font-size:36px"></i>
+            <i class="fa fa-cc-mastercard" style="color:red; font-size:36px"></i>
+            <i class="fa fa-cc-discover" style="color:orange; font-size:36px"></i>
+        </div>
+
+        <label class="col-2">Name</label>
+        <InputText class="form-control col-6" @bind-Value="_payment.Name" placeholder="John M. Doe" />
+        &nbsp;<ValidationMessage For="@(() => _payment.Name)" />
+
+        <label for="ccnum">Credit card number</label>
+        <InputText class="form-control col-6" @bind-Value="_payment.CreditCardNumber" placeholder="1111-2222-3333-4444" />
+        &nbsp;<ValidationMessage For="@(() => _payment.CreditCardNumber)" />
+
+        <label for="expmonth">Exp Month</label>
+        <InputText class="form-control col-2" @bind-Value="_payment.ExpirationMonth" placeholder="02" />
+        &nbsp;<ValidationMessage For="@(() => _payment.ExpirationMonth)" />
+
+        <div class="row">
+            <div class="col-50">
+                <label for="expyear">Expiration Year</label>
+                <InputText class="form-control col-4" @bind-Value="_payment.ExpirationYear" placeholder="21" />
+                &nbsp;<ValidationMessage For="@(() => _payment.ExpirationYear)" />
+            </div>
+            <div class="col-50">
+                <label for="cvv">CVV</label>
+                <InputText class="form-control col-4" @bind-Value="_payment.CCV" placeholder="123" />
+                &nbsp;<ValidationMessage For="@(() => _payment.CCV)" />
+            </div>
+        </div>
+        <div>
+            <h4>
+                <pre class="tab">Total amount being processed:    $@Total</pre>
+            </h4>
+        </div>
+        <div class="col-12 row">
+            <span class="col-2"></span>
+            <a href="/ConfirmationPage/@Total/@Id/@Email/@FirstName/@LastName/@_payment.CreditCardNumber/@_payment.ExpirationMonth/@_payment.ExpirationYear">
+                <input type="submit" class="btn btn-primary btn-block" value="Submit" />
+            </a>
+        </div>
+    </EditForm>
+</div>
+
+@code
+{
+    [Parameter]
+    public decimal Total { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public string Email { get; set; }
+
+    [Parameter]
+    public string FirstName { get; set; }
+
+    [Parameter]
+    public string LastName { get; set; }
+}

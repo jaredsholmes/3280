@@ -1,0 +1,105 @@
+﻿@page "/ConfirmationPage/{Total:decimal}/{Id:int}/{Email}/{FirstName}/{LastName}/{CreditCardNumber}/{ExpirationMonth}/{ExpirationYear}"
+
+@{ 
+    var lastFourDigits = CreditCardNumber.Substring(CreditCardNumber.Length - 4, 4);
+    var maskString = new String('*', CreditCardNumber.Length - lastFourDigits.Length);
+    var maskedCreditCard = string.Concat(maskString, lastFourDigits);
+
+    var place = new CS3280AirBnBGroupProject.Services.ResultService();
+}
+    <div class="ConfirmationForm">
+        <div class="ConfirmationItem">
+            <h3>Your payment has been processed</h3>
+        </div>
+        <div class="ConfirmationItem">
+            <h4>Thank you for booking with us, @FirstName @LastName!</h4>
+        </div>
+        <div class="ConfirmationItem">
+            <h6>Booking Number: </h6> <h7 class="textFormatting">@bookingNumberGenerator()</h7>
+        </div>
+        <div class="ConfirmationItem">
+            <h6>Confirmation Email Sent To: </h6> <h7 class="textFormatting">@Email</h7>
+        </div>
+        <div class="ConfirmationItem">
+            <h6>Booking Location: </h6> <h7 class="textFormatting">@place.GetById(Id).City, @place.GetById(Id).State</h7>
+        </div>
+        <div class="ConfirmationItem">
+            <h6>Booking Date: </h6> <h7 class="textFormatting">@DateTime.Today</h7>
+        </div>
+        <div class="ConfirmationItem">
+            <h6>Total for Booking: </h6> <h7 class="textFormatting">$@Total</h7>
+        </div>
+        <div class="ConfirmationItem">
+            <h6>Payment Processed on Card: </h6> <h7 class="textFormatting">@maskedCreditCard</h7>
+        </div>
+        <div class="ConfirmationItem">
+            <h6>Card Expiration Date: </h6> <h7 class="textFormatting">@ExpirationMonth / @ExpirationYear</h7>
+        </div>
+
+        <div>
+            <p>Check-In time is at 2:00pm on the start date of your booking. Check-Out time will be at 12:00pm on your check-out date.</p>
+        </div>
+    </div>
+
+@code { 
+    /// <summary>
+    /// The total cost of the reservation as determined from the receipt depicted on the SelectedResult Page
+    /// </summary>
+    [Parameter]
+    public decimal Total { get; set; }
+
+    /// <summary>
+    /// The unique ID for the Place/Result which was selected from the PopulatedResults page 
+    /// </summary>
+    [Parameter]
+    public int Id { get; set; }
+
+    /// <summary>
+    /// The Email address specified by the user when filling out the BillingInformation Page
+    /// </summary>
+    [Parameter]
+    public string Email { get; set; }
+
+    /// <summary>
+    /// The first name of the user specified when filling out the BillingInformation Page
+    /// </summary>
+    [Parameter]
+    public string FirstName { get; set; }
+
+    /// <summary>
+    /// The last name of the user specified when filling out the BillingInformation Page
+    /// </summary>
+    [Parameter]
+    public string LastName { get; set; }
+
+    /// <summary>
+    /// The Credit Card Number entered by the user for payment, when filling out the PaymentInformation Page
+    /// </summary>
+    [Parameter]
+    public string CreditCardNumber { get; set; }
+
+    /// <summary>
+    /// The Credit Card expiration month entered by the user for payment, when filling out the PaymentInformation Page
+    /// </summary>
+    [Parameter]
+    public string ExpirationMonth { get; set; }
+
+    /// <summary>
+    /// The Credit Card expiration year entered by the user for payment, when filling out the PaymentInformation Page
+    /// </summary>
+    [Parameter]
+    public string ExpirationYear { get; set; }
+
+    //Initializes a random order booking number
+    Random bookingNumber = new Random();
+
+    /// <summary>
+    /// Specifies the range of random bookingNumber generated, and changes it to a padded 8 digit string.
+    /// </summary>
+    /// <returns> Returns a randomly generated 8 digit padded number between 00000001 and 99999999</returns>
+    private string bookingNumberGenerator()
+    {
+        return bookingNumber.Next(1, 99999999).ToString("D8");
+    }
+}
+
