@@ -60,18 +60,29 @@
 
 @code
 {
+    /// <summary>
+    /// The total cost of the reservation as determined from the receipt depicted on the SelectedResult page
+    /// </summary>
     [Parameter]
     public decimal Total { get; set; }
-
+    /// <summary>
+    /// The unique ID for the Place/Result which was selected from the PopulatedResults page 
+    /// </summary>
     [Parameter]
     public int Id { get; set; }
-
+    /// <summary>
+    /// The Email address specified by the user when filling out the BillingInformation page
+    /// </summary>
     [Parameter]
     public string Email { get; set; }
-
+    /// <summary>
+    /// The First Name specified by the user when filling out the BillingInformation page
+    /// </summary>
     [Parameter]
     public string FirstName { get; set; }
-
+    /// <summary>
+    /// The Last Name specified by the user when filling out the BillingInformation page
+    /// </summary>
     [Parameter]
     public string LastName { get; set; }
 }

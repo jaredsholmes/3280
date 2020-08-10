@@ -50,21 +50,35 @@
 </EditForm>
 
 @code
-{ [Parameter]
-            public decimal Total { get; set; }
+{ 
+    /// <summary>
+    /// The total cost of the reservation as determined from the receipt depicted on the SelectedResult page
+    /// </summary>
+    [Parameter]
+    public decimal Total { get; set; }
+    /// <summary>
+    /// The unique ID for the Place/Result which was selected from the PopulatedResults page 
+    /// </summary>
+    [Parameter]
+    public int Id { get; set; }
 
-            [Parameter]
-            public int Id { get; set; }
+    /// <summary>
+    /// This method is to be invoked when the OnValidSubmit event is triggered. It uses Modal to display the payment information in a new Modal popup.
+    /// </summary>
+    /// <param name="Total">The total cost of the reservation as determined from the receipt depicted on the SelectedResult page</param>
+    /// <param name="Id">The unique ID for the Place/Result which was selected from the PopulatedResults page</param>
+    /// <param name="Email">The Email address specified by the user when filling out the BillingInformation page</param>
+    /// <param name="FirstName">The First Name specified by the user when filling out the BillingInformation page</param>
+    /// <param name="LastName">The Last Name specified by the user when filling out the BillingInformation page</param>
+    void PopUpPaymentInformation(decimal Total, int Id, string Email, string FirstName, string LastName)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(PaymentInformation.Total), Total);
+        parameters.Add(nameof(PaymentInformation.Id), Id);
+        parameters.Add(nameof(PaymentInformation.Email), Email);
+        parameters.Add(nameof(PaymentInformation.FirstName), FirstName);
+        parameters.Add(nameof(PaymentInformation.LastName), LastName);
 
-
-            void PopUpPaymentInformation(decimal Total, int Id, string Email, string FirstName, string LastName)
-            {
-                var parameters = new ModalParameters();
-                parameters.Add(nameof(PaymentInformation.Total), Total);
-                parameters.Add(nameof(PaymentInformation.Id), Id);
-                parameters.Add(nameof(PaymentInformation.Email), Email);
-                parameters.Add(nameof(PaymentInformation.FirstName), FirstName);
-                parameters.Add(nameof(PaymentInformation.LastName), LastName);
-
-                Modal.Show<PaymentInformation>("Payment Information", parameters);
-            } }
+        Modal.Show<PaymentInformation>("Payment Information", parameters);
+    }
+}
